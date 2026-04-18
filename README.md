@@ -2,7 +2,7 @@
 
 **AI-powered district budget intelligence platform for Maharashtra**
 
-BudgetOS is a full-stack React web application that gives district administrators real-time budget diagnostics, fund-flow leakage investigation, and AI-generated reallocation scenarios — all powered by [Google Gemini AI](https://deepmind.google/technologies/gemini/).
+BudgetOS is a full-stack React web application that gives district administrators real-time budget diagnostics, fund-flow leakage investigation, and AI-generated reallocation scenarios — with the help of [Google Gemini AI](https://deepmind.google/technologies/gemini/).
 
 ---
 
