@@ -10,7 +10,7 @@ const EXAMPLE_GOALS = [
   'Boost infrastructure to attract industrial investment',
 ];
 
-export default function ScenarioPlannerPage({ district }) {
+export default function ScenarioPlannerPage({ district, dataset, avgHdi }) {
   const [goal, setGoal] = useState('');
 
   return (
@@ -53,6 +53,8 @@ export default function ScenarioPlannerPage({ district }) {
         district={district}
         goal={goal}
         onGoalChange={setGoal}
+        dataset={dataset}
+        avgHdi={avgHdi}
       />
     </div>
   );

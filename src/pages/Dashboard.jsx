@@ -2,9 +2,16 @@ import React from 'react';
 import SectorCard from '../components/dashboard/SectorCard';
 import AllocationChart from '../components/dashboard/AllocationChart';
 import IndicatorsPanel from '../components/dashboard/IndicatorsPanel';
+import DatasetSummaryCard from '../components/dashboard/DatasetSummaryCard';
 import { SECTORS } from '../data/seedData';
 
-export default function Dashboard({ district }) {
+
+export default function Dashboard({ district, dataset, onChangeDataset }) {
+  if (!district) return null;
+
+  // Use all sectors present in the allocation object (from hydration)
+  const allocationSectors = Object.keys(district.allocation || {});
+
   return (
     <div className="p-6 space-y-6 animate-fade-in">
       {/* Header */}
@@ -15,13 +22,18 @@ export default function Dashboard({ district }) {
         </p>
       </div>
 
+      {/* Dataset Summary */}
+      {dataset && (
+        <DatasetSummaryCard dataset={dataset} onChangeDataset={onChangeDataset} />
+      )}
+
       {/* Sector Cards */}
       <div>
         <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">
           Sector Health
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-          {SECTORS.map(sector => (
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+          {allocationSectors.map(sector => (
             <SectorCard
               key={sector}
               sector={sector}
@@ -39,7 +51,7 @@ export default function Dashboard({ district }) {
           allocation={district.allocation}
           recommended={district.recommendedAllocation}
         />
-        <IndicatorsPanel district={district} />
+        <IndicatorsPanel district={district} dataset={dataset} />
       </div>
     </div>
   );

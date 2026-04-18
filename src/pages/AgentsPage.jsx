@@ -2,7 +2,6 @@ import React from 'react';
 import { Activity, Search, Bot, Sliders, ArrowRight } from 'lucide-react';
 import DiagnosisAgent from '../components/agents/DiagnosisAgent';
 import LeakageAgent from '../components/agents/LeakageAgent';
-import { DISTRICTS } from '../data/seedData';
 
 function ScenarioAgentCard({ onNavigate }) {
   return (
@@ -21,7 +20,7 @@ function ScenarioAgentCard({ onNavigate }) {
       </div>
 
       <p className="text-sm text-text-muted mb-4">
-        Type a natural language goal (e.g. "Reduce infant mortality by 40%") and Claude simulates 3
+        Type a natural language goal (e.g. "Reduce infant mortality by 40%") and gemini simulates 3
         budget reallocation scenarios with feasibility scores and tradeoff analysis.
       </p>
 
@@ -54,7 +53,7 @@ function ScenarioAgentCard({ onNavigate }) {
   );
 }
 
-export default function AgentsPage({ district, triggerData, allDistricts, onNavigate }) {
+export default function AgentsPage({ district, triggerData, allDistricts, onNavigate, dataset, avgHdi, peers }) {
   return (
     <div className="p-6 space-y-6 animate-fade-in">
       {/* Header */}
@@ -75,7 +74,7 @@ export default function AgentsPage({ district, triggerData, allDistricts, onNavi
           Model: <strong className="text-text">gemini-2.5-flash</strong>
         </span>
         <span className="text-text-subtle">·</span>
-        <span className="text-xs text-text-muted">Multi-turn reasoning · 3 API calls per agent</span>
+        <span className="text-xs text-text-muted">Multi-turn reasoning</span>
       </div>
 
       {/* Top row: Diagnosis + Leakage */}
@@ -88,7 +87,12 @@ export default function AgentsPage({ district, triggerData, allDistricts, onNavi
               Agent 1 — Budget Diagnosis
             </h3>
           </div>
-          <DiagnosisAgent district={district} allDistricts={allDistricts} />
+          <DiagnosisAgent
+            district={district}
+            allDistricts={allDistricts}
+            dataset={dataset}
+            avgHdi={avgHdi}
+          />
         </div>
 
         {/* Leakage Investigation Agent */}
@@ -99,7 +103,11 @@ export default function AgentsPage({ district, triggerData, allDistricts, onNavi
               Agent 3 — Leakage Investigation
             </h3>
           </div>
-          <LeakageAgent triggerData={triggerData} district={district} />
+          <LeakageAgent
+            triggerData={triggerData}
+            district={district}
+            peers={peers}
+          />
         </div>
       </div>
 

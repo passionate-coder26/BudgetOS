@@ -1,8 +1,8 @@
 import React from 'react';
-import { Bell, Settings } from 'lucide-react';
+import { Bell, Settings, Database } from 'lucide-react';
 import { getScoreColor, getScoreLabel } from '../../data/seedData';
 
-export default function TopBar({ district }) {
+export default function TopBar({ district, onChangeDataset }) {
   if (!district) return null;
   const scoreColor = getScoreColor(district.healthScore);
   const scoreLabel = getScoreLabel(district.healthScore);
@@ -30,6 +30,16 @@ export default function TopBar({ district }) {
           <span className="text-sm text-text-muted">{scoreLabel}</span>
         </div>
 
+        {onChangeDataset && (
+          <button
+            onClick={onChangeDataset}
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border text-text-subtle hover:text-accent hover:border-accent transition-all duration-200"
+            title="Change Dataset"
+          >
+            <Database size={13} />
+            Change Dataset
+          </button>
+        )}
         <button className="btn-ghost p-2 rounded-lg text-text-subtle hover:text-text">
           <Bell size={18} />
         </button>

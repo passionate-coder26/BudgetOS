@@ -2,7 +2,7 @@ import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { SECTORS, SECTOR_COLORS } from '../../data/seedData';
+import { SECTOR_COLORS } from '../../data/seedData';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -22,10 +22,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function AllocationChart({ allocation, recommended }) {
-  const data = SECTORS.map(sector => ({
-    sector: sector.split(' ')[0], // Shorten labels
+  // Derive sectors dynamically from the allocation object
+  const sectors = Object.keys(allocation || {});
+  const data = sectors.map(sector => ({
+    sector: sector.length > 8 ? sector.slice(0, 7) + '…' : sector, // shorten long labels
     'Current': allocation[sector],
-    'Recommended': recommended[sector],
+    'Recommended': (recommended || {})[sector] ?? allocation[sector],
   }));
 
   return (

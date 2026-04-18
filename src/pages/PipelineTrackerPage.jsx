@@ -1,18 +1,36 @@
 import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle, ChevronRight } from 'lucide-react';
-import { SECTORS, SECTOR_COLORS, LEAKAGE_REASONS, isLeaking } from '../data/seedData';
+import { SECTOR_COLORS, LEAKAGE_REASONS, isLeaking } from '../data/seedData';
+
+// Extended color palette for uploaded dataset sectors
+const EXTENDED_COLORS = {
+  ...SECTOR_COLORS,
+  Healthcare:      '#38bdf8',
+  Education:       '#a78bfa',
+  Agriculture:     '#34d399',
+  Infrastructure:  '#fbbf24',
+  'Social Welfare':'#f87171',
+  Defense:         '#f97316',
+  Technology:      '#60a5fa',
+  Welfare:         '#f472b6',
+  Environment:     '#4ade80',
+};
+
+function getSectorColor(sector) {
+  return EXTENDED_COLORS[sector] || '#94a3b8';
+}
 
 const PIPELINE_LEVELS = ['district', 'block', 'gramPanchayat', 'beneficiary'];
 const LEVEL_LABELS = {
-  district: 'District HQ',
-  block: 'Block Office',
+  district:      'District HQ',
+  block:         'Block Office',
   gramPanchayat: 'Gram Panchayat',
-  beneficiary: 'End Beneficiary',
+  beneficiary:   'End Beneficiary',
 };
 
 function PipelineNode({ level, data, sector, onClick }) {
   const leaked = isLeaking(data.received);
-  const color = SECTOR_COLORS[sector];
+  const color = getSectorColor(sector);
   const leakReason = data.leakReason ? LEAKAGE_REASONS[data.leakReason] : null;
 
   return (
@@ -58,7 +76,7 @@ function PipelineNode({ level, data, sector, onClick }) {
 }
 
 function SectorPipeline({ sector, pipeline, onNodeClick }) {
-  const color = SECTOR_COLORS[sector];
+  const color = getSectorColor(sector);
 
   return (
     <div className="card mb-4">
@@ -124,8 +142,11 @@ export default function PipelineTrackerPage({ district, onTriggerLeakageAgent })
     onTriggerLeakageAgent(info);
   };
 
+  // Derive sectors dynamically from district.pipeline keys (works with any dataset)
+  const pipelineSectors = Object.keys(district.pipeline || {});
+
   // Count red nodes
-  const redNodeCount = SECTORS.reduce((count, sector) => {
+  const redNodeCount = pipelineSectors.reduce((count, sector) => {
     return count + PIPELINE_LEVELS.filter(level =>
       level !== 'district' && isLeaking(district.pipeline[sector][level].received)
     ).length;
@@ -170,7 +191,7 @@ export default function PipelineTrackerPage({ district, onTriggerLeakageAgent })
       </div>
 
       {/* Pipelines per sector */}
-      {SECTORS.map(sector => (
+      {pipelineSectors.map(sector => (
         <SectorPipeline
           key={sector}
           sector={sector}

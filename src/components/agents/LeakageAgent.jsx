@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Loader2, CheckCircle, AlertCircle, MapPin, ArrowRight } from 'lucide-react';
 import { callGemini, parseJSON } from '../../utils/geminiApi';
-import { DISTRICTS, LEAKAGE_REASONS } from '../../data/seedData';
+import { LEAKAGE_REASONS } from '../../data/seedData';
 
 const STEPS = [
   'Localising the leak source...',
@@ -41,7 +41,7 @@ function StepProgress({ currentStep, steps }) {
   );
 }
 
-export default function LeakageAgent({ triggerData, district }) {
+export default function LeakageAgent({ triggerData, district, peers = [] }) {
   const [status, setStatus] = useState('idle');
   const [currentStep, setCurrentStep] = useState(0);
   const [result, setResult] = useState(null);
@@ -88,21 +88,21 @@ Return ONLY valid JSON:
 
       // === STEP 2: Peer Comparison ===
       setCurrentStep(1);
-      const peerData = DISTRICTS
-        .filter(d => d.id !== district.id)
-        .map(d => ({
-          name: d.name,
-          level_data: d.pipeline[sector]?.[level] || null,
-          healthScore: d.healthScore,
-        }))
-        .filter(d => d.level_data);
+      // peers = top-2 HDI districts from the dataset, passed as a prop
+      const peerSummary = peers.map(p => ({
+        name: p.district,
+        hdi: p.hdi,
+        literacy: p.literacy,
+        infantMortality: p.infantMortality,
+      }));
 
       const step2Prompt = `Now compare ${district.name}'s ${sector} leakage at ${level} level with peer districts.
 
-All districts' ${sector} pipeline data at ${level} level:
-${JSON.stringify(peerData, null, 2)}
+Peer districts (top-performing by HDI in the dataset):
+${JSON.stringify(peerSummary, null, 2)}
 
-${district.name} has only ${data.received}% receipt rate. Find 2 districts that perform significantly better (>80% received) and explain what they do differently.
+${district.name} has only ${data.received}% receipt rate at ${level} level.
+Explain what these peer districts likely do differently to achieve better fund flow efficiency.
 Return ONLY valid JSON:
 {"peerDistricts":[{"name":"string","receiptRate":number,"whatTheyDoDifferently":"string"}]}`;
 

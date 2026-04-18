@@ -152,7 +152,7 @@ function ScenarioCard({ scenario, index, isRecommended, currentAllocation }) {
   );
 }
 
-export default function ScenarioAgent({ district, goal, onGoalChange }) {
+export default function ScenarioAgent({ district, goal, onGoalChange, dataset, avgHdi }) {
   const [status, setStatus] = useState('idle');
   const [currentStep, setCurrentStep] = useState(0);
   const [result, setResult] = useState(null);
@@ -172,7 +172,10 @@ export default function ScenarioAgent({ district, goal, onGoalChange }) {
     try {
       // === STEP 1: Goal Decomposition ===
       setCurrentStep(0);
-      const step1Prompt = `You are a government budget scenario planner for Indian districts.
+      const dsCtx = dataset
+        ? `\nDataset context: ${dataset.length} total districts. Average HDI across dataset: ${avgHdi}.`
+        : '';
+      const step1Prompt = `You are a government budget scenario planner for Indian districts.${dsCtx}
 
 User Goal: "${goal}"
 
@@ -220,7 +223,11 @@ Goal: "${goal}"
 Scenarios generated: ${JSON.stringify(step2Data?.scenarios)}
 Current allocation: ${JSON.stringify(district.allocation)}
 
-Choose which scenario best achieves the goal with realistic feasibility. Explain what each sector gains/loses.
+Choose the scenario that best achieves the goal with the highest realistic feasibility.
+IMPORTANT:
+1. "recommendedScenario" must be the 0-based index (0, 1, or 2) of your chosen scenario.
+2. "newAllocation" and "tradeoffs" MUST precisely match the sectorChanges of that chosen scenario. Do not mix data from different scenarios.
+
 Return ONLY valid JSON:
 {
   "targetMetric": "string",

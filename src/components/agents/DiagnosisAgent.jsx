@@ -3,6 +3,7 @@ import { Play, CheckCircle, AlertCircle, Loader2, Activity, BarChart3, Zap } fro
 import { callGemini, parseJSON } from '../../utils/geminiApi';
 import { SECTORS } from '../../data/seedData';
 
+
 const STEPS = [
   'Scanning district indicators...',
   'Tracing fund flow pipeline...',
@@ -60,7 +61,7 @@ function StepProgress({ currentStep, totalSteps, steps }) {
   );
 }
 
-export default function DiagnosisAgent({ district, allDistricts }) {
+export default function DiagnosisAgent({ district, allDistricts, dataset, avgHdi }) {
   const [status, setStatus] = useState('idle'); // idle | running | done | error
   const [currentStep, setCurrentStep] = useState(0);
   const [result, setResult] = useState(null);
@@ -119,7 +120,10 @@ Return ONLY valid JSON:
 
       // === STEP 3+4: History + Full Report ===
       setCurrentStep(2);
-      const step3Prompt = `Final synthesis for ${district.name}.
+      const datasetContext = dataset
+        ? `\nDataset context: ${dataset.length} districts total. Average HDI across all districts: ${avgHdi}.`
+        : '';
+      const step3Prompt = `Final synthesis for ${district.name}.${datasetContext}
 
 6-Year Spend History:
 ${JSON.stringify(district.history, null, 2)}

@@ -2,8 +2,22 @@ import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { SECTOR_COLORS } from '../../data/seedData';
 
+// Extended palette covers both original and uploaded dataset sectors
+const EXTENDED_COLORS = {
+  ...SECTOR_COLORS,
+  Healthcare:    '#38bdf8',
+  Education:     '#a78bfa',
+  Agriculture:   '#34d399',
+  Infrastructure:'#fbbf24',
+  'Social Welfare':'#f87171',
+  Defense:       '#f97316',
+  Technology:    '#60a5fa',
+  Welfare:       '#f472b6',
+  Environment:   '#4ade80',
+};
+
 export default function SectorCard({ sector, allocation, recommended, health }) {
-  const color = SECTOR_COLORS[sector];
+  const color = EXTENDED_COLORS[sector] || '#94a3b8';
   const score = health?.score ?? 0;
   const trend = health?.trend ?? 'stable';
   const diff = recommended - allocation;
