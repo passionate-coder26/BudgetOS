@@ -92,8 +92,8 @@ export default function IndicatorsPanel({ district, dataset }) {
       <div className="card">
         <h3 className="font-semibold text-text mb-1">District Performance vs State Average</h3>
         <p className="text-xs text-text-subtle mb-4">Normalized scores across key indicators (100 = best)</p>
-        <ResponsiveContainer width="100%" height={200}>
-          <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+        <ResponsiveContainer width="100%" height={300}>
+          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
             <PolarGrid stroke="#2d3f5e" />
             <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />

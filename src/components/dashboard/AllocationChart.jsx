@@ -48,21 +48,26 @@ export default function AllocationChart({ allocation, recommended }) {
           </div>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} barCategoryGap="30%" barGap={4}>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart 
+          data={data} 
+          barCategoryGap="30%" 
+          barGap={4}
+          margin={{ top: 10, right: 30, left: -15, bottom: 20 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#2d3f5e" vertical={false} />
           <XAxis
             dataKey="sector"
             tick={{ fill: '#94a3b8', fontSize: 12 }}
-            axisLine={false}
+            axisLine={{ stroke: '#2d3f5e' }}
             tickLine={false}
           />
           <YAxis
             tick={{ fill: '#94a3b8', fontSize: 11 }}
-            axisLine={false}
+            axisLine={{ stroke: '#2d3f5e' }}
             tickLine={false}
             tickFormatter={(v) => `${v}%`}
-            domain={[0, 35]}
+            domain={[0, 'auto']}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(30,64,175,0.1)' }} />
           <Bar dataKey="Current" fill="#1e40af" radius={[4, 4, 0, 0]} />
