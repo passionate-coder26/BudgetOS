@@ -86,7 +86,7 @@ cd BudgetOS
 npm install
 ```
 
-### 2. Add your Anthropic API key
+### 2. Add your Gemini API key
 
 ```bash
 cp .env.example .env
@@ -94,7 +94,7 @@ cp .env.example .env
 # VITE_GEMINI_API_KEY=AIzaSy...
 ```
 
-Get a key at [aistudio.google.com](https://aistudio.google.com/app/apikey)
+Get a key at [Google AI Studio](https://aistudio.google.com/app/api-keys)
 
 ### 3. Run
 
@@ -170,7 +170,3 @@ src/
 Sector colors are consistent across all charts, pipeline nodes, and cards.
 
 ---
-
-## License
-
-MIT
