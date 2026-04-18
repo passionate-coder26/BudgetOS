@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  LayoutDashboard, GitBranch, Bot, Sliders, ChevronDown, Zap
+  LayoutDashboard, GitBranch, Bot, Sliders, ChevronDown, Zap, Menu, X
 } from 'lucide-react';
 
 const navItems = [
@@ -11,10 +11,17 @@ const navItems = [
 ];
 
 export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onDistrictChange, districts }) {
-  return (
-    <div className="flex flex-col h-full bg-bg-card border-r border-border w-64 flex-shrink-0">
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNav = (id) => {
+    onNavigate(id);
+    setMobileOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-5 border-b border-border">
+      <div className="p-5 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 glow-blue">
             <Zap size={18} className="text-white" />
@@ -24,6 +31,13 @@ export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onD
             <div className="text-text-subtle text-xs">Budget Intelligence</div>
           </div>
         </div>
+        {/* Mobile close */}
+        <button
+          className="md:hidden text-text-subtle hover:text-text"
+          onClick={() => setMobileOpen(false)}
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* District Selector */}
@@ -58,7 +72,7 @@ export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onD
         {navItems.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            onClick={() => onNavigate(id)}
+            onClick={() => handleNav(id)}
             className={`nav-link w-full text-left ${currentPage === id ? 'active' : ''}`}
           >
             <Icon size={16} className="flex-shrink-0" />
@@ -75,5 +89,40 @@ export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onD
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger button — shown in TopBar area via absolute positioning */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg bg-bg-card border border-border 
+                   flex items-center justify-center text-text-subtle hover:text-text transition-all"
+        onClick={() => setMobileOpen(true)}
+      >
+        <Menu size={18} />
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex flex-col h-full bg-bg-card border-r border-border w-64 flex-shrink-0">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile sidebar (slide-in) */}
+      <div
+        className={`md:hidden fixed top-0 left-0 h-full w-64 bg-bg-card border-r border-border z-50 
+                    transform transition-transform duration-300 flex flex-col
+                    ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <SidebarContent />
+      </div>
+    </>
   );
 }

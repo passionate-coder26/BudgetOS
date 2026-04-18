@@ -43,6 +43,7 @@ export default function App() {
             district={district}
             triggerData={leakageTrigger}
             allDistricts={DISTRICTS}
+            onNavigate={setCurrentPage}
           />
         );
       case 'scenario':
