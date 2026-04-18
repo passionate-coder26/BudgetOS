@@ -14,7 +14,7 @@ BudgetOS is a full-stack React web application that gives district administrator
 
 | AI Agents | Scenario Planner |
 |---|---|
-| 3 autonomous Claude agents | Natural language → 3 budget scenarios |
+| 3 autonomous gemini agents | Natural language → 3 budget scenarios |
 
 ---
 
