@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-bg text-text font-sans;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #0f172a;
+    color: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2d3f5e;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3b62d9;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-bg-card rounded-xl border border-border p-5;
+  }
+  
+  .card-elevated {
+    @apply bg-bg-elevated rounded-xl border border-border p-5;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-light text-white font-semibold px-5 py-2.5 rounded-lg 
+           transition-all duration-200 flex items-center gap-2 cursor-pointer
+           disabled:opacity-50 disabled:cursor-not-allowed active:scale-95;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent hover:bg-bg-elevated text-text-muted hover:text-text font-medium px-4 py-2 
+           rounded-lg transition-all duration-200 flex items-center gap-2 cursor-pointer;
+  }
+
+  .badge {
+    @apply text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+
+  .badge-primary { @apply badge bg-primary/20 text-blue-300; }
+  .badge-danger { @apply badge bg-red-500/20 text-red-300; }
+  .badge-success { @apply badge bg-green-500/20 text-green-300; }
+  .badge-warning { @apply badge bg-amber-500/20 text-amber-300; }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-text-muted 
+           hover:text-text hover:bg-bg-elevated transition-all duration-200 cursor-pointer
+           text-sm font-medium;
+  }
+
+  .nav-link.active {
+    @apply bg-primary/20 text-blue-300 border border-primary/30;
+  }
+
+  .step-indicator {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(30, 64, 175, 0.3);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+    animation: redPulse 2s ease-in-out infinite;
+  }
+
+  .glow-green {
+    box-shadow: 0 0 15px rgba(22, 163, 74, 0.3);
+  }
+
+  .pipeline-connector {
+    position: relative;
+  }
+
+  .pipeline-connector::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, #2d3f5e, #1e40af);
+    transform: translateY(-50%);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-card {
+    background: linear-gradient(135deg, #1e293b 0%, #243248 100%);
+  }
+
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes redPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(220, 38, 38, 0.6); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #2d3f5e 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.health-ring {
+  filter: drop-shadow(0 0 12px currentColor);
+}
+
+.sector-healthcare { color: #38bdf8; border-color: #38bdf8; background-color: rgba(56, 189, 248, 0.1); }
+.sector-education { color: #a78bfa; border-color: #a78bfa; background-color: rgba(167, 139, 250, 0.1); }
+.sector-agriculture { color: #34d399; border-color: #34d399; background-color: rgba(52, 211, 153, 0.1); }
+.sector-infrastructure { color: #fbbf24; border-color: #fbbf24; background-color: rgba(251, 191, 36, 0.1); }
+.sector-social { color: #f87171; border-color: #f87171; background-color: rgba(248, 113, 113, 0.1); }
