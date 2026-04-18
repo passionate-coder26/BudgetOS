@@ -10,7 +10,7 @@ export default function DatasetSummaryCard({ dataset, onChangeDataset }) {
   const sorted  = [...dataset].sort((a, b) => b.hdi - a.hdi);
   const best    = sorted[0];
   const worst   = sorted[sorted.length - 1];
-  const avgPov  = (dataset.reduce((s, d) => s + (d.poverty || 0), 0) / dataset.length).toFixed(1);
+  const avgPov  = (dataset.reduce((s, d) => s + (d.poverty || 0), 0) / dataset.length).toFixed(2);
 
   return (
     <div className="card flex flex-wrap items-center gap-4 py-3 px-4 text-xs">

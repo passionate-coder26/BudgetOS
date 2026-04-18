@@ -21,7 +21,7 @@ export default function IndicatorsPanel({ district, dataset }) {
     infantMortality: dataset.reduce((s,d) => s+d.infantMortality, 0) / dataset.length,
     poverty: dataset.reduce((s,d) => s+d.poverty, 0) / dataset.length,
     perCapita: dataset.reduce((s,d) => s+(d.gdp/d.population*100000), 0) / dataset.length,
-    healthcare: dataset.reduce((s,d) => s+d.Healthcare, 0) / dataset.length,
+    healthcare: dataset.reduce((s,d) => s+(Number(d.Healthcare)||0), 0) / dataset.length,
   };
 
   const allArr = {
@@ -30,7 +30,7 @@ export default function IndicatorsPanel({ district, dataset }) {
     imr: dataset.map(d => d.infantMortality),
     pov: dataset.map(d => d.poverty),
     pc: dataset.map(d => d.gdp/d.population*100000),
-    hc: dataset.map(d => d.Healthcare)
+    hc: dataset.map(d => Number(d.Healthcare)||0)
   };
 
   const radarData = [
@@ -74,11 +74,11 @@ export default function IndicatorsPanel({ district, dataset }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {[
             { label: 'Human Development Index', value: indicators.HDI.toFixed(2), unit: '', color: indicators.HDI >= 0.7 ? '#16a34a' : indicators.HDI >= 0.6 ? '#d97706' : '#dc2626' },
-            { label: 'Literacy Rate', value: indicators.literacyRate, unit: '%', color: indicators.literacyRate >= 80 ? '#16a34a' : indicators.literacyRate >= 70 ? '#d97706' : '#dc2626' },
-            { label: 'Infant Mortality', value: indicators.infantMortality, unit: '/1000', color: indicators.infantMortality <= 25 ? '#16a34a' : indicators.infantMortality <= 35 ? '#d97706' : '#dc2626' },
-            { label: 'Below Poverty Line', value: indicators.povertyPercent, unit: '%', color: indicators.povertyPercent <= 12 ? '#16a34a' : indicators.povertyPercent <= 20 ? '#d97706' : '#dc2626' },
+            { label: 'Literacy Rate', value: Number(indicators.literacyRate).toFixed(2), unit: '%', color: indicators.literacyRate >= 80 ? '#16a34a' : indicators.literacyRate >= 70 ? '#d97706' : '#dc2626' },
+            { label: 'Infant Mortality', value: Number(indicators.infantMortality).toFixed(2), unit: '/1000', color: indicators.infantMortality <= 25 ? '#16a34a' : indicators.infantMortality <= 35 ? '#d97706' : '#dc2626' },
+            { label: 'Below Poverty Line', value: Number(indicators.povertyPercent).toFixed(2), unit: '%', color: indicators.povertyPercent <= 12 ? '#16a34a' : indicators.povertyPercent <= 20 ? '#d97706' : '#dc2626' },
             { label: 'Per Capita Income', value: `₹${(indicators.gdpPerCapita / 1000).toFixed(0)}K`, unit: '', color: indicators.gdpPerCapita >= 120000 ? '#16a34a' : indicators.gdpPerCapita >= 80000 ? '#d97706' : '#dc2626' },
-            { label: 'Population', value: `${(indicators.population / 1000000).toFixed(1)}M`, unit: '', color: '#94a3b8' },
+            { label: 'Population', value: `${(indicators.population / 1000000).toFixed(2)}M`, unit: '', color: '#94a3b8' },
           ].map(({ label, value, unit, color }) => (
             <div key={label} className="bg-bg-elevated rounded-xl p-3 border border-border">
               <div className="text-xs text-text-subtle mb-1">{label}</div>

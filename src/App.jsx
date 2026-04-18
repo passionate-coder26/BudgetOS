@@ -54,21 +54,12 @@ function hydrateDistrict(row) {
   const povertyScore  = Math.max(0, 100 - row.poverty * 2);
   const healthScore   = Math.round((hdiScore * 0.35 + literacyScore * 0.25 + imrScore * 0.2 + povertyScore * 0.2));
 
-  // Build allocation from uploaded sector columns, normalised to sum to 100
+  // Build allocation directly from uploaded sector columns (user-provided percentages)
   const UPLOAD_SECTORS = ['Healthcare', 'Education', 'Infrastructure', 'Agriculture'];
-  const rawTotal = UPLOAD_SECTORS.reduce((s, k) => s + (Number(row[k]) || 0), 0);
   const allocation = {};
-  if (rawTotal > 0) {
-    UPLOAD_SECTORS.forEach(k => {
-      allocation[k] = Math.round((Number(row[k]) / rawTotal) * 100);
-    });
-    // Correct rounding drift
-    const diff = 100 - Object.values(allocation).reduce((a, b) => a + b, 0);
-    allocation[UPLOAD_SECTORS[0]] += diff;
-  } else {
-    const even = Math.floor(100 / UPLOAD_SECTORS.length);
-    UPLOAD_SECTORS.forEach((k, i) => { allocation[k] = even + (i === 0 ? 100 - even * UPLOAD_SECTORS.length : 0); });
-  }
+  UPLOAD_SECTORS.forEach(k => {
+    allocation[k] = Number(row[k]) || 0;
+  });
 
   // Recommended: nudge toward HDI-improving sectors
   const recommendedAllocation = { ...allocation };

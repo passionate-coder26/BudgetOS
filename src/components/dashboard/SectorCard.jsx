@@ -48,9 +48,9 @@ export default function SectorCard({ sector, allocation, recommended, health }) 
       {/* Allocation */}
       <div className="mb-3">
         <div className="flex justify-between items-end mb-1.5">
-          <span className="text-2xl font-bold text-text">{allocation}%</span>
+          <span className="text-2xl font-bold text-text">{Number(allocation).toFixed(2)}%</span>
           <span className="text-xs text-text-subtle">
-            Rec: <span style={{ color }}>{recommended}%</span>
+            Rec: <span style={{ color }}>{Number(recommended).toFixed(2)}%</span>
           </span>
         </div>
         
@@ -62,9 +62,9 @@ export default function SectorCard({ sector, allocation, recommended, health }) 
           />
         </div>
         
-        {diff !== 0 && (
+        {Math.abs(diff) >= 0.01 && (
           <div className="text-xs mt-1" style={{ color: diff > 0 ? '#16a34a' : '#dc2626' }}>
-            {diff > 0 ? `+${diff}% needed` : `${diff}% surplus`}
+            {diff > 0 ? `+${diff.toFixed(2)}% needed` : `${Math.abs(diff).toFixed(2)}% surplus`}
           </div>
         )}
       </div>
