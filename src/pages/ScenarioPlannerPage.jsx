@@ -22,7 +22,7 @@ export default function ScenarioPlannerPage({ district }) {
           Scenario Planner
         </h2>
         <p className="text-text-subtle text-sm mt-0.5">
-          Type a natural language goal — Claude will generate and compare 3 budget reallocation scenarios
+          Type a natural language goal — Gemini will generate and compare 3 budget reallocation scenarios
         </p>
       </div>
 

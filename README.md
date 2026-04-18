@@ -2,7 +2,7 @@
 
 **AI-powered district budget intelligence platform for Maharashtra**
 
-BudgetOS is a full-stack React web application that gives district administrators real-time budget diagnostics, fund-flow leakage investigation, and AI-generated reallocation scenarios — all powered by [Claude AI](https://www.anthropic.com/).
+BudgetOS is a full-stack React web application that gives district administrators real-time budget diagnostics, fund-flow leakage investigation, and AI-generated reallocation scenarios — all powered by [Google Gemini AI](https://deepmind.google/technologies/gemini/).
 
 ---
 
@@ -34,7 +34,7 @@ BudgetOS is a full-stack React web application that gives district administrator
 
 ### 🤖 AI Agents (3 agents, multi-turn Claude reasoning)
 
-**Agent 1 — Budget Diagnosis**
+**Agent 1 — Budget Diagnosis (Gemini)**
 - 3-step analysis: indicator scan → pipeline trace → history + interventions
 - Output: health score ring, critical sector risk bars, leakage table, ranked interventions, 2-sentence summary
 
@@ -62,7 +62,7 @@ BudgetOS is a full-stack React web application that gives district administrator
 | Styling | Tailwind CSS v3 (dark theme) |
 | Charts | Recharts (bar, line, pie/donut) |
 | Icons | Lucide React |
-| AI | Anthropic Claude API (`claude-sonnet-4-20250514`) |
+| AI | Google Gemini API (`gemini-1.5-pro`) |
 | State | React `useState` / `useReducer` |
 | Data | Hardcoded seed data — 8 Maharashtra districts |
 
@@ -91,10 +91,10 @@ npm install
 ```bash
 cp .env.example .env
 # Then edit .env and paste your key:
-# VITE_ANTHROPIC_API_KEY=sk-ant-...
+# VITE_GEMINI_API_KEY=AIzaSy...
 ```
 
-Get a key at [console.anthropic.com](https://console.anthropic.com)
+Get a key at [aistudio.google.com](https://aistudio.google.com/app/apikey)
 
 ### 3. Run
 
@@ -114,18 +114,18 @@ const messages = [];
 
 // Step 1
 messages.push({ role: 'user', content: step1Prompt });
-const reply1 = await callClaude(messages);           // Claude API call
+const reply1 = await callGemini(messages);           // Gemini API call
 messages.push({ role: 'assistant', content: reply1 }); // append to history
 
 // Step 2 builds on Step 1 context
 messages.push({ role: 'user', content: step2Prompt });
-const reply2 = await callClaude(messages);
+const reply2 = await callGemini(messages);
 // ...
 ```
 
 **Error handling**: Each step is wrapped in `try/catch`. If Step N fails, partial results from Steps 1…N-1 are still shown — the app never crashes silently.
 
-**JSON parsing**: Claude responses are stripped of ` ```json ` fences using regex before `JSON.parse()`.
+**JSON parsing**: Gemini responses are stripped of ` ```json ` fences using regex before `JSON.parse()`.
 
 ---
 
@@ -134,7 +134,7 @@ const reply2 = await callClaude(messages);
 ```
 src/
 ├── data/seedData.js                  ← 8 districts, all seed data
-├── utils/claudeApi.js                ← Claude fetch wrapper + JSON parser
+├── utils/geminiApi.js                ← Gemini fetch wrapper + JSON parser
 ├── components/
 │   ├── layout/
 │   │   ├── Sidebar.jsx               ← District selector, nav (mobile-responsive)

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, CheckCircle, AlertCircle, Loader2, Activity, BarChart3, Zap } from 'lucide-react';
-import { callClaude, parseJSON } from '../../utils/claudeApi';
+import { callGemini, parseJSON } from '../../utils/geminiApi';
 import { SECTORS } from '../../data/seedData';
 
 const STEPS = [
@@ -95,7 +95,7 @@ Return ONLY valid JSON (no markdown):
 {"criticalSectors":[{"sector":"string","riskScore":number,"reason":"string"}]}`;
 
       messages.push({ role: 'user', content: step1Prompt });
-      const reply1 = await callClaude(messages);
+      const reply1 = await callGemini(messages);
       step1Data = parseJSON(reply1);
       messages.push({ role: 'assistant', content: reply1 });
 
@@ -113,7 +113,7 @@ Return ONLY valid JSON:
 {"leakagePoints":[{"level":"string","sector":"string","cause":"delay|tied_grant|capacity_gap|diversion","amountStuck":number,"description":"string"}]}`;
 
       messages.push({ role: 'user', content: step2Prompt });
-      const reply2 = await callClaude(messages);
+      const reply2 = await callGemini(messages);
       step2Data = parseJSON(reply2);
       messages.push({ role: 'assistant', content: reply2 });
 
@@ -141,7 +141,7 @@ Return ONLY valid JSON:
 }`;
 
       messages.push({ role: 'user', content: step3Prompt });
-      const reply3 = await callClaude(messages);
+      const reply3 = await callGemini(messages);
       const step3Data = parseJSON(reply3);
 
       if (step3Data) {
@@ -178,7 +178,7 @@ Return ONLY valid JSON:
             </div>
             <div>
               <h3 className="font-bold text-text">Budget Diagnosis Agent</h3>
-              <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Claude analysis</p>
+              <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Gemini analysis</p>
             </div>
           </div>
           <div className={`badge ${

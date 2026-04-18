@@ -84,7 +84,7 @@ export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onD
       {/* Footer */}
       <div className="p-4 border-t border-border">
         <div className="text-xs text-text-subtle text-center">
-          Powered by Commit || Cry<br />
+          Powered by Gemini AI<br />
           <span className="text-text-subtle/60">Maharashtra Budget Analytics</span>
         </div>
       </div>

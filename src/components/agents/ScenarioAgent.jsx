@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sliders, Loader2, CheckCircle, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
-import { callClaude, parseJSON } from '../../utils/claudeApi';
+import { callGemini, parseJSON } from '../../utils/geminiApi';
 import { SECTOR_COLORS, SECTORS } from '../../data/seedData';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend
@@ -191,7 +191,7 @@ Return ONLY valid JSON:
 {"targetMetric":"string","relevantSectors":["string"],"currentGaps":[{"metric":"string","current":number,"benchmark":number,"gap":"string"}]}`;
 
       messages.push({ role: 'user', content: step1Prompt });
-      const reply1 = await callClaude(messages);
+      const reply1 = await callGemini(messages);
       step1Data = parseJSON(reply1);
       messages.push({ role: 'assistant', content: reply1 });
 
@@ -208,7 +208,7 @@ Return ONLY valid JSON:
 {"scenarios":[{"id":1,"sectorChanges":[{"sector":"string","delta":number,"newAllocation":number}],"projectedOutcome":"string","feasibilityScore":number}]}`;
 
       messages.push({ role: 'user', content: step2Prompt });
-      const reply2 = await callClaude(messages);
+      const reply2 = await callGemini(messages);
       step2Data = parseJSON(reply2);
       messages.push({ role: 'assistant', content: reply2 });
 
@@ -232,7 +232,7 @@ Return ONLY valid JSON:
 }`;
 
       messages.push({ role: 'user', content: step3Prompt });
-      const reply3 = await callClaude(messages);
+      const reply3 = await callGemini(messages);
       const step3Data = parseJSON(reply3);
 
       if (step3Data) {
@@ -261,7 +261,7 @@ Return ONLY valid JSON:
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-text">Scenario Planning Agent</h3>
-            <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Claude scenario generation</p>
+            <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Gemini scenario generation</p>
           </div>
           <div className={`badge ${
             status === 'idle' ? 'badge-primary' :

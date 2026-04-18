@@ -14,7 +14,7 @@ function ScenarioAgentCard({ onNavigate }) {
           </div>
           <div>
             <h3 className="font-bold text-text">Scenario Planning Agent</h3>
-            <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Claude scenario generation</p>
+            <p className="text-xs text-text-subtle mt-0.5">3-step multi-turn Gemini scenario generation</p>
           </div>
         </div>
         <div className="badge badge-primary">Ready</div>
@@ -59,21 +59,14 @@ export default function AgentsPage({ district, triggerData, allDistricts, onNavi
     <div className="p-6 space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-text flex items-center gap-2">
-          <Bot size={20} className="text-blue-400" />
-          AI Agents
-        </h2>
-        <p className="text-text-subtle text-sm mt-0.5">
-          Three autonomous Claude-powered agents for budget diagnosis, leakage investigation, and scenario planning
+          Three autonomous Gemini-powered agents for budget diagnosis, leakage investigation, and scenario planning
         </p>
       </div>
 
       {/* Model info badge */}
       <div className="flex items-center gap-2 bg-bg-elevated border border-border rounded-xl px-4 py-2.5 w-fit">
         <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-        <span className="text-xs text-text-muted">
-          Model: <strong className="text-text">claude-sonnet-4-20250514</strong>
-        </span>
+          Model: <strong className="text-text">gemini-1.5-pro</strong>
         <span className="text-text-subtle">·</span>
         <span className="text-xs text-text-muted">Multi-turn reasoning · 3 API calls per agent</span>
       </div>
