@@ -62,7 +62,7 @@ BudgetOS is a full-stack React web application that gives district administrator
 | Styling | Tailwind CSS v3 (dark theme) |
 | Charts | Recharts (bar, line, pie/donut) |
 | Icons | Lucide React |
-| AI | Google Gemini API (`gemini-1.5-pro`) |
+| AI | Google Gemini API (`gemini-2.5-flash`) |
 | State | React `useState` / `useReducer` |
 | Data | Hardcoded seed data — 8 Maharashtra districts |
 

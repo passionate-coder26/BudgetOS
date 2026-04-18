@@ -1,7 +1,7 @@
 // Gemini API wrapper for BudgetOS agents
 // API key is read from environment: VITE_GEMINI_API_KEY
 
-const MODEL = 'gemini-1.5-pro';
+const MODEL = 'gemini-2.5-flash';
 
 export async function callGemini(messages, systemPrompt = 'You are a government budget analyst AI specializing in Indian district finances.') {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
