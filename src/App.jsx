@@ -46,6 +46,61 @@ function normalizeDataset(rows) {
 // Converts a flat dataset row into the full district object the app expects.
 // Pipeline, sectorHealth, history are generated algorithmically from the data.
 // ─────────────────────────────────────────────────────────────────────────────
+function computeRecommended(row, allocation) {
+
+  function normalize(value, min, max) {
+    return Math.min(1, Math.max(0, (value - min) / (max - min)));
+  }
+
+  // ---- Need Scores ----
+  const needs = {
+    Healthcare:
+      0.5 * normalize(row.infantMortality, 10, 100) +
+      0.3 * (1 - normalize(row.hdi, 0.4, 0.9)) +
+      0.2 * normalize(row.poverty, 5, 50),
+
+    Education:
+      0.6 * (1 - normalize(row.literacy, 50, 100)) +
+      0.4 * (1 - normalize(row.hdi, 0.4, 0.9)),
+
+    Infrastructure:
+      0.7 * (1 - normalize(row.gdp, 20000, 150000)) +
+      0.3 * normalize(row.poverty, 5, 50),
+
+    Agriculture:
+      0.6 * normalize(row.poverty, 5, 50) +
+      0.4 * (1 - normalize(row.gdp, 20000, 150000))
+  };
+
+  // ---- Convert needs to relative pressure ----
+  const avgNeed = Object.values(needs).reduce((a, b) => a + b, 0) / 4;
+
+  // deviation from average → some go up, some go down
+  let adjusted = {};
+  const maxShift = 0.08; // max ±8% change (realistic)
+
+  for (let key in allocation) {
+    const deviation = needs[key] - avgNeed;
+
+    // scale deviation into [-maxShift, +maxShift]
+    const shift = Math.max(-maxShift, Math.min(maxShift, deviation));
+
+    adjusted[key] = allocation[key] * (1 + shift);
+  }
+
+  // ---- Normalize total budget ----
+  const totalAdjusted = Object.values(adjusted).reduce((a, b) => a + b, 0);
+  const baseTotal = Object.values(allocation).reduce((a, b) => a + b, 0);
+
+  let result = {};
+  for (let key in adjusted) {
+    result[key] = +(adjusted[key] / totalAdjusted * baseTotal).toFixed(2);
+  }
+
+  return result;
+}
+
+
 function hydrateDistrict(row) {
   // Compute a health score from indicator values (0–100 scale)
   const hdiScore = Math.min(100, row.hdi * 100);
@@ -62,15 +117,7 @@ function hydrateDistrict(row) {
   });
 
   // Recommended: nudge toward HDI-improving sectors
-  const recommendedAllocation = { ...allocation };
-  if (row.hdi < 0.65) {
-    recommendedAllocation.Healthcare = Math.min(35, allocation.Healthcare + 5);
-    recommendedAllocation.Education = Math.min(35, allocation.Education + 3);
-    const excess = (recommendedAllocation.Healthcare - allocation.Healthcare)
-      + (recommendedAllocation.Education - allocation.Education);
-    recommendedAllocation.Infrastructure = Math.max(5, allocation.Infrastructure - Math.ceil(excess / 2));
-    recommendedAllocation.Agriculture = Math.max(5, allocation.Agriculture - Math.floor(excess / 2));
-  }
+  const recommendedAllocation = computeRecommended(row, allocation);
 
   // Sector health: derive from allocation adequacy & HDI
   const sectorHealth = {};
