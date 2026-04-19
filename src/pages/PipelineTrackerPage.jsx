@@ -134,7 +134,7 @@ function SectorPipeline({ sector, pipeline, onNodeClick }) {
   );
 }
 
-export default function PipelineTrackerPage({ district, onTriggerLeakageAgent }) {
+export default function PipelineTrackerPage({ district, onTriggerLeakageAgent, officialEntries }) {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const handleNodeClick = (info) => {
@@ -145,10 +145,71 @@ export default function PipelineTrackerPage({ district, onTriggerLeakageAgent })
   // Derive sectors dynamically from district.pipeline keys (works with any dataset)
   const pipelineSectors = Object.keys(district.pipeline || {});
 
-  // Count red nodes
+  // ── Merge official entries over seed data ────────────────────────────────
+  const distKey = district.name.toLowerCase();
+  // Use the latest quarter that has submissions, or default to Q1_2025
+  const quarters = ['Q4_2025', 'Q3_2025', 'Q2_2025', 'Q1_2025'];
+  const districtEntries = officialEntries?.[distKey] || {};
+  const activeQKey = quarters.find(q => districtEntries[q]) || null;
+  const qEntry = activeQKey ? districtEntries[activeQKey] : null;
+  const distEntry   = qEntry?.district?.sectors;
+  const blockEntry  = qEntry?.block?.sectors;
+  const gpEntry     = qEntry?.gp?.sectors;
+
+  function getMergedPipeline(sector) {
+    const base = { ...(district.pipeline[sector] || {}) };
+    const sectAlloc = distEntry?.[sector]?.allocated ?? base.district?.amount ?? 0;
+    const distReleased = distEntry?.[sector]?.released;
+    const blockReceived = blockEntry?.[sector]?.received;
+    const blockLeakType = blockEntry?.[sector]?.leakType || null;
+    const blockToGP = blockEntry?.[sector]?.releasedToGP;
+    const gpReceived = gpEntry?.[sector]?.received;
+    const gpLeakType = gpEntry?.[sector]?.leakType || null;
+    const gpUtilised = gpEntry?.[sector]?.utilised;
+
+    let merged = { ...base };
+
+    if (distReleased !== undefined) {
+      merged.block = {
+        ...merged.block,
+        amount: distReleased,
+      };
+    }
+    if (blockReceived !== undefined && distReleased !== undefined) {
+      merged.block = {
+        ...merged.block,
+        received: distReleased > 0 ? Math.round(blockReceived / distReleased * 100) : 0,
+        leakReason: blockLeakType,
+      };
+    }
+    if (blockToGP !== undefined) {
+      merged.gramPanchayat = {
+        ...merged.gramPanchayat,
+        amount: blockToGP,
+      };
+    }
+    if (gpReceived !== undefined && blockToGP !== undefined) {
+      merged.gramPanchayat = {
+        ...merged.gramPanchayat,
+        received: blockToGP > 0 ? Math.round(gpReceived / blockToGP * 100) : 0,
+        leakReason: gpLeakType,
+      };
+    }
+    if (gpUtilised !== undefined && gpReceived !== undefined) {
+      merged.beneficiary = {
+        ...merged.beneficiary,
+        amount: gpUtilised,
+        received: gpReceived > 0 ? Math.round(gpUtilised / gpReceived * 100) : 0,
+      };
+    }
+    return merged;
+  }
+
+  // Count red nodes (using merged data)
   const redNodeCount = pipelineSectors.reduce((count, sector) => {
+    const merged = getMergedPipeline(sector);
     return count + PIPELINE_LEVELS.filter(level =>
-      level !== 'district' && isLeaking(district.pipeline[sector][level].received)
+      level !== 'district' && isLeaking(merged[level].received)
     ).length;
   }, 0);
 
@@ -191,11 +252,17 @@ export default function PipelineTrackerPage({ district, onTriggerLeakageAgent })
       </div>
 
       {/* Pipelines per sector */}
+      {qEntry && (
+        <div className="flex items-center gap-2 text-xs text-[#00D4B4] bg-[#00D4B4]/10 border border-[#00D4B4]/25 rounded-lg px-4 py-2">
+          <span>✅</span>
+          <span className="font-medium">Live official data loaded for {activeQKey?.replace('_', ' ')}</span>
+        </div>
+      )}
       {pipelineSectors.map(sector => (
         <SectorPipeline
           key={sector}
           sector={sector}
-          pipeline={district.pipeline[sector]}
+          pipeline={getMergedPipeline(sector)}
           onNodeClick={handleNodeClick}
         />
       ))}

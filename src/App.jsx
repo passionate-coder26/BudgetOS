@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import PipelineTrackerPage from './pages/PipelineTrackerPage';
 import AgentsPage from './pages/AgentsPage';
 import ScenarioPlannerPage from './pages/ScenarioPlannerPage';
+import LoginPage from './pages/LoginPage';
+import DataEntryPortalPage from './pages/DataEntryPortalPage';
 import { SECTORS, SECTOR_COLORS, getScoreColor, getScoreLabel } from './data/seedData';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -559,10 +561,45 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [leakageTrigger, setLeakageTrigger] = useState(null);
 
+  // ── Auth state ───────────────────────────────────────────────────────────
+  const [loggedInUser, setLoggedInUser]     = useState(null);
+  const [showLoginPage, setShowLoginPage]   = useState(false);
+
+  // official entries: { distKey: { qKey: { district, block, gp } } }
+  const [officialEntries, setOfficialEntries] = useState({});
+
+  function handleOfficialLogin(user) {
+    setLoggedInUser(user);
+    setShowLoginPage(false);
+    setCurrentPage('dataentry');
+  }
+
+  function handleLogout() {
+    setLoggedInUser(null);
+    setCurrentPage('dashboard');
+  }
+
+  function handleSwitchView() {
+    setCurrentPage('dashboard');
+  }
+
+  function handleOfficialEntry({ distKey, qKey, role, data }) {
+    setOfficialEntries(prev => ({
+      ...prev,
+      [distKey]: {
+        ...(prev[distKey] || {}),
+        [qKey]: {
+          ...((prev[distKey] || {})[qKey] || {}),
+          [role]: data,
+        },
+      },
+    }));
+  }
+
   // ── Dataset state (null = show upload page) ─────────────────────────────
-  const [dataset, setDataset] = useState(null);       // flat normalized rows
-  const [hydratedDistricts, setHydratedDistricts] = useState([]);       // full district objects
-  const [selectedDistrict, setSelectedDistrict] = useState(null);       // district name string
+  const [dataset, setDataset] = useState(null);
+  const [hydratedDistricts, setHydratedDistricts] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
 
   // Hydrate district objects whenever dataset changes
   useEffect(() => {
@@ -583,7 +620,12 @@ export default function App() {
     setLeakageTrigger(null);
   }, []);
 
-  // ── Gate: show upload page until dataset is loaded ───────────────────────
+  // ── Gate 1: show login page as overlay ───────────────────────────────────
+  if (showLoginPage) {
+    return <LoginPage onLogin={handleOfficialLogin} onBack={() => setShowLoginPage(false)} />;
+  }
+
+  // ── Gate 2: show upload page until dataset is loaded ────────────────────
   if (!dataset) {
     return <DatasetUploadPage onDatasetLoaded={(rows) => setDataset(rows)} />;
   }
@@ -617,11 +659,21 @@ export default function App() {
             onChangeDataset={() => setDataset(null)}
           />
         );
+      case 'dataentry':
+        return (
+          <DataEntryPortalPage
+            user={loggedInUser}
+            allDistricts={hydratedDistricts}
+            officialEntries={officialEntries}
+            onSubmitEntry={handleOfficialEntry}
+          />
+        );
       case 'pipeline':
         return (
           <PipelineTrackerPage
             district={district}
             onTriggerLeakageAgent={handleLeakageTrigger}
+            officialEntries={officialEntries}
           />
         );
       case 'agents':
@@ -663,11 +715,16 @@ export default function App() {
         selectedDistrict={selectedDistrict}
         onDistrictChange={handleDistrictChange}
         districts={districtList}
+        loggedInUser={loggedInUser}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <TopBar
           district={district}
           onChangeDataset={() => setDataset(null)}
+          loggedInUser={loggedInUser}
+          onOfficialLogin={() => setShowLoginPage(true)}
+          onSwitchView={handleSwitchView}
+          onLogout={handleLogout}
         />
         <main className="flex-1 overflow-y-auto">
           {renderPage()}

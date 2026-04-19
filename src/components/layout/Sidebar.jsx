@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import {
-  LayoutDashboard, GitBranch, Bot, Sliders, ChevronDown, Zap, Menu, X
+  LayoutDashboard, GitBranch, Bot, Sliders, ChevronDown, Zap, Menu, X, ClipboardEdit
 } from 'lucide-react';
 
-const navItems = [
+const BASE_NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'pipeline', label: 'Pipeline Tracker', icon: GitBranch },
   { id: 'agents', label: 'AI Agents', icon: Bot },
   { id: 'scenario', label: 'Scenario Planner', icon: Sliders },
 ];
 
-export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onDistrictChange, districts }) {
+const PORTAL_NAV = { id: 'dataentry', label: 'Data Entry Portal', icon: ClipboardEdit };
+
+export default function Sidebar({ currentPage, onNavigate, selectedDistrict, onDistrictChange, districts, loggedInUser }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navItems = loggedInUser ? [...BASE_NAV, PORTAL_NAV] : BASE_NAV;
 
   const handleNav = (id) => {
     onNavigate(id);
